@@ -9,7 +9,10 @@
 
 # if ZSH_AI_COMMANDS_ENDPOINT is openai, then the API key must be set
 # if not, then the API key can be initialized to xyz
-(( ${+ZSH_AI_COMMANDS_ENDPOINT} == "https://api.openai.com" && ! ${+ZSH_AI_COMMANDS_API_KEY} )) && echo "zsh-ai-commands::Error::No API key set in the env var ZSH_AI_COMMANDS_API_KEY. Plugin will not be loaded" && return
+if [[ "${ZSH_AI_COMMANDS_ENDPOINT}" == "https://api.openai.com" && -z "${ZSH_AI_COMMANDS_API_KEY}" ]]; then
+    echo "zsh-ai-commands::Error::No API key set in the env var ZSH_AI_COMMANDS_API_KEY. Plugin will not be loaded"
+    return
+fi
 
 (( ! ${+ZSH_AI_COMMANDS_API_KEY} )) && typeset -g ZSH_AI_COMMANDS_API_KEY='xyz'
 
