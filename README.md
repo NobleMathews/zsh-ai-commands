@@ -1,10 +1,10 @@
-# ZSH AI Commands
+# ZSH AI Commands (with an LLM endpoint)
 ![zsh-ai-commands-demo](./zsh-ai-commands-demo.gif)
 
-This plugin works by asking GPT (*gpt-4o*) for terminal commands that achieve the described target action.
+This plugin works by sending a query to any LLM endpoint that uses the openai schema for terminal commands that achieve the described target action.
 
 To use it just type what you want to do (e.g. `list all files in this directory`) and hit the configured hotkey (default: `Ctrl+o`).
-When GPT responds with its suggestions just select the one from the list you want to use.
+When the LLM responds with its suggestions just select the one from the list you want to use.
 
 ## Requirements
 * [curl](https://curl.se/)
@@ -28,10 +28,11 @@ Enable it in your `.zshrc` by adding it to your plugin list:
 plugins=(... zsh-ai-commands ...)
 ```
 
-Set the API key in your by setting:
+Set keys you want to override:
 
 ```
-ZSH_AI_COMMANDS_OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+export ZSH_AI_COMMANDS_ENDPOINT="http://swag-gpu:8000"
+export ZSH_AI_COMMANDS_LLM_NAME="meta/llama-3.3-70b-instruct"
 ```
 
 Replace the placeholder with your own key.
@@ -41,7 +42,8 @@ The config can be set e.g in your `.zshrc` in this case be careful to not leak t
 
 | Variable                                  | Default                                 | Description                                                                                                |
 | ----------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `ZSH_AI_COMMANDS_OPENAI_API_KEY` | `-/-` (not set) | OpenAI API key |
+| `ZSH_AI_COMMANDS_ENDPOINT`                | `https://api.openai.com` | The endpoint to send the request to |
+| `ZSH_AI_COMMANDS_API_KEY` | `xyz` | OpenAI API key should be set here if you are not using a setup that ignores the key |
 | `ZSH_AI_COMMANDS_HOTKEY` | `'^o'` (Ctrl+o) | Hotkey to trigger the request |
 | `ZSH_AI_COMMANDS_LLM_NAME` | `gpt-4o` | LLM name |
 | `ZSH_AI_COMMANDS_N_GENERATIONS` | `5` | Number of completions to ask for |

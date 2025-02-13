@@ -5,7 +5,13 @@
 (( ! $+commands[curl] )) && return
 
 # Check if if OpenAi API key ist set
-(( ! ${+ZSH_AI_COMMANDS_OPENAI_API_KEY} )) && echo "zsh-ai-commands::Error::No API key set in the env var ZSH_AI_COMMANDS_OPENAI_API_KEY. Plugin will not be loaded" && return
+(( ! ${+ZSH_AI_COMMANDS_ENDPOINT} )) && typeset -g ZSH_AI_COMMANDS_ENDPOINT='https://api.openai.com'
+
+# if ZSH_AI_COMMANDS_ENDPOINT is openai, then the API key must be set
+# if not, then the API key can be initialized to xyz
+(( ${+ZSH_AI_COMMANDS_ENDPOINT} == "https://api.openai.com" && ! ${+ZSH_AI_COMMANDS_API_KEY} )) && echo "zsh-ai-commands::Error::No API key set in the env var ZSH_AI_COMMANDS_API_KEY. Plugin will not be loaded" && return
+
+(( ! ${+ZSH_AI_COMMANDS_API_KEY} )) && typeset -g ZSH_AI_COMMANDS_API_KEY='xyz'
 
 (( ! ${+ZSH_AI_COMMANDS_HOTKEY} )) && typeset -g ZSH_AI_COMMANDS_HOTKEY='^o'
 
@@ -96,9 +102,9 @@ fzf_ai_commands() {
   # check request is valid json
   {echo "$ZSH_AI_COMMANDS_GPT_REQUEST_BODY" | jq > /dev/null} || {echo "Couldn't parse the body request" ; return}
 
-  ZSH_AI_COMMANDS_GPT_RESPONSE=$(curl -q --silent https://api.openai.com/v1/chat/completions \
+  ZSH_AI_COMMANDS_GPT_RESPONSE=$(curl -q --silent $ZSH_AI_COMMANDS_ENDPOINT/v1/chat/completions \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $ZSH_AI_COMMANDS_OPENAI_API_KEY" \
+    -H "Authorization: Bearer $ZSH_AI_COMMANDS_API_KEY" \
     -d "$ZSH_AI_COMMANDS_GPT_REQUEST_BODY")
   local ret=$?
 
